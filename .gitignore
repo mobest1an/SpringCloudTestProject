@@ -1,0 +1,5 @@
+# Project exclude paths
+/discovery-service/target/
+/examinator/target/
+/history/target/
+/mathematic/target/

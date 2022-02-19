@@ -1,0 +1,47 @@
+version: '2.4'
+
+services:
+  service-discovery:
+    image: application/provider-discovery-service:oci
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8761/actuator/health" ]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+    environment:
+      SERVER_PORT: 8761
+    ports:
+      - 8761:8761
+
+  examinator:
+    image: application/provider-examinator:oci
+    depends_on:
+      service-discovery:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      DISCOVERY_URL: http://service-discovery:8761/eureka
+    ports:
+      - 8081:8080
+
+  history:
+    image: application/provider-history:oci
+    depends_on:
+      service-discovery:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      DISCOVERY_URL: http://service-discovery:8761/eureka
+    ports:
+      - 8082:8080
+
+  mathematic:
+    image: application/provider-math:oci
+    depends_on:
+      service-discovery:
+        condition: service_started
+    environment:
+      SERVER_PORT: 8080
+      DISCOVERY_URL: http://service-discovery:8761/eureka
+    ports:
+      - 8083:8080
